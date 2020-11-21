@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  openrestry:
+    build: './'
+    ports:
+      - '8000:80'
+  app:
+    build:
+      context: .
+      dockerfile: './sample-app/Dockerfile'
