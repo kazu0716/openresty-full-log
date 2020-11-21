@@ -28,47 +28,26 @@ openrestryで巨大なresponse bodyをdockerの標準出力にloggingするこ�
 ```
 $ git clone https://github.com/kazu0716/openresty-full-log.git
 $ cd openrestry-fulllog
-$ docker-compose up -d
-$ curl -XPOST http://127.0.0.1:8000/users
-[
-    {
-        "Country": "AFG",
-        "Indicator": "NGDP_R",
-        "Value": 183.26,
-        "Year": 2002
-    },
-    {
-        "Country": "AFG",
-        "Indicator": "NGDP_R",
-        "Value": 198.736,
-        "Year": 2003
-    },
-    {
-        "Country": "AFG",
-        "Indicator": "NGDP_R",
-        "Value": 200.069,
-        "Year": 2004
-    },
-    {
-        "Country": "AFG",
-        "Indicator": "NGDP_R",
-        "Value": 223.737,
-        "Year": 2005
-    },
-    {
-        "Country": "AFG",
-        "Indicator": "NGDP_R",
-        "Value": 235.731,
-        "Year": 2006
-    },
-    {
-        "Country": "AFG",
-        "Indicator": "NGDP_R",
-        "Value": 267.177,
-        "Year": 2007
-    },
- ==省略==
-```
+$ docker-compose up   
+Recreating openrestry-fulllog_openrestry_1 ... done
+Starting openrestry-fulllog_app_1          ... done
+Attaching to openrestry-fulllog_app_1, openrestry-fulllog_openrestry_1
+app_1         |  * Serving Flask app "main" (lazy loading)
+app_1         |  * Environment: production
+app_1         |    WARNING: This is a development server. Do not use it in a production deployment.
+app_1         |    Use a production WSGI server instead.
+app_1         |  * Debug mode: on
+app_1         |  * Running on http://0.0.0.0:8080/ (Press CTRL+C to quit)
+app_1         |  * Restarting with stat
+app_1         |  * Debugger is active!
+app_1         |  * Debugger PIN: 534-421-937
+app_1         | 192.168.16.3 - - [21/Nov/2020 16:06:41] "POST /small_res_body HTTP/1.0" 201 -
+openrestry_1  | 192.168.16.1 -  [21/Nov/2020:16:06:41 +0000] "POST /small_res_body HTTP/1.1" 201 21 "" "PostmanRuntime/7.26.5" 0.006 "11111111" "" "{\n  \"test\": \"test\"\n}\n"
+# 以下、別Terminalで実施し、上記のログが出力
+$ curl -XPOST http://127.0.0.1:8000//small_res_body
+{
+  "test": "test"
+}```
 
 ## developer向け
 
@@ -84,10 +63,21 @@ $ pipenv install --dev
  
 # Note
  
-- `docker-compose logs`でログの出力結果を確認できる
+## appは2つのendpointを有する
+  - /small_res_body
+    - シンプルなrespomse bodyを返す
+  - /large_res_body
+    - 数MBのrespomse bodyを返す
+
+## http response headerのlogging
+  - ex account_idというresponse headerに関して
+    - log_format にて `$sent_http_account_id` といった形で記述すればloggingされる
 
 ```
-$ docker-compose logs
-==省略==
-ountry\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 930.228, \n    \"Year\": 2009\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1044.497, \n    \"Year\": 2010\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1161.215, \n    \"Year\": 2011\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1152.216, \n    \"Year\": 2012\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1176.475, \n    \"Year\": 2013\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1236.042, \n    \"Year\": 2014\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1038.885, \n    \"Year\": 2015\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1135.765, \n    \"Year\": 2016\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1268.722, \n    \"Year\": 2017\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1350.107, \n    \"Year\": 2018\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1444.495, \n    \"Year\": 2019\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"NGDPDPC\", \n    \"Value\": 1504.154, \n    \"Year\": 2020\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 1.916, \n    \"Year\": 1980\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 1.868, \n    \"Year\": 1981\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 2.091, \n    \"Year\": 1982\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 2.514, \n    \"Year\": 1983\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 2.74, \n    \"Year\": 1984\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 3.051, \n    \"Year\": 1985\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 3.298, \n    \"Year\": 1986\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 3.505, \n    \"Year\": 1987\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 3.902, \n    \"Year\": 1988\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 4.133, \n    \"Year\": 1989\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 4.423, \n    \"Year\": 1990\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 5.045, \n    \"Year\": 1991\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 5.284, \n    \"Year\": 1992\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 5.297, \n    \"Year\": 1993\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 5.707, \n    \"Year\": 1994\n  }, \n  {\n    \"Country\": \"TCD\", \n    \"Indicator\": \"PPPGDP\", \n    \"Value\": 5.781, \n    \"Year\": 1995\n  }\n]\n"
+    log_format bodylog escape=json '$remote_addr - $remote_user [$time_local] '
+        '"$request" $status $body_bytes_sent '
+        '"$http_referer" "$http_user_agent" $request_time '
+        '"$sent_http_account_id" '
+        '"$request_body" "$resp_body"';
 ```
+
